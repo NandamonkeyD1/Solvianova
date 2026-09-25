@@ -45,7 +45,6 @@
                     <option value="BACKEND_DEV">Backend Developer</option>
                     <option value="IOT_ENGINEER">IoT Engineer</option>
                     <option value="JOKI">Joki Freelance</option>
-                    <option value="SUPER_ADMIN">Super Admin</option>
                 </select>
                 @error('role') <span class="text-xs text-red-400 mt-1 block">{{ $message }}</span> @enderror
             </div>
