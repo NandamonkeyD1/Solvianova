@@ -421,4 +421,23 @@ class SolviaNovaSystemTest extends TestCase
             'amount' => 2500000,
         ]);
     }
+
+    public function test_super_admin_can_add_custom_role()
+    {
+        $admin = User::where('role', 'SUPER_ADMIN')->first();
+
+        Livewire::actingAs($admin)
+            ->test(\App\Livewire\UserManager::class)
+            ->set('name', 'DevOps Specialist')
+            ->set('email', 'devops@solvia.nova')
+            ->set('custom_role', 'DEVOPS_ENGINEER')
+            ->set('password', 'password123')
+            ->call('saveUser')
+            ->assertDispatched('toast');
+
+        $this->assertDatabaseHas('users', [
+            'email' => 'devops@solvia.nova',
+            'role' => 'DEVOPS_ENGINEER',
+        ]);
+    }
 }

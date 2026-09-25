@@ -5,8 +5,24 @@
             <p class="text-xs text-slate-400">Kelola akun anggota tim, joki freelance, role, dan hak akses sistem.</p>
         </div>
         <button wire:click="openCreateModal" class="px-4 py-2.5 bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-brand-600/25 transition-all flex items-center justify-center gap-2">
-            + Tambah Member / Joki
+            + Tambah Member / Role Baru
         </button>
+    </div>
+
+    <!-- Active Roles Overview -->
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 shadow-xl space-y-3">
+        <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-white uppercase tracking-wider">Role & Peran Sistem Aktif</span>
+            <span class="text-[10px] text-slate-400">Super Admin dapat memasukkan Role Baru (Custom) kapan saja</span>
+        </div>
+        <div class="flex flex-wrap gap-2">
+            @foreach($allRoles as $rTag)
+            <span class="px-3 py-1 rounded-xl text-xs font-bold bg-slate-950 border border-slate-800 text-slate-300 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-indigo-400"></span>
+                {{ str_replace('_', ' ', $rTag) }}
+            </span>
+            @endforeach
+        </div>
     </div>
 
     <!-- Users Table -->
@@ -101,19 +117,21 @@
 
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block font-semibold text-slate-300 mb-1">Role User *</label>
-                        <select wire:model="role" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-slate-100 focus:outline-none">
-                            <option value="SUPER_ADMIN">Super Admin / Owner</option>
-                            <option value="CONTENT_CREATOR">Content Creator</option>
-                            <option value="DESIGNER">Designer</option>
-                            <option value="FRONTEND_DEV">Frontend Developer</option>
-                            <option value="BACKEND_DEV">Backend Developer</option>
-                            <option value="IOT_ENGINEER">IoT Engineer</option>
-                            <option value="JOKI">Joki Freelance</option>
+                        <label class="block font-semibold text-slate-300 mb-1">Role / Peran Member *</label>
+                        <select wire:model="role" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2 text-xs text-slate-100 focus:outline-none mb-1.5">
+                            @foreach($allRoles as $rOpt)
+                                <option value="{{ $rOpt }}">{{ str_replace('_', ' ', $rOpt) }}</option>
+                            @endforeach
                         </select>
+                        <input type="text" wire:model="custom_role" list="roles-datalist" placeholder="Atau ketik Role Baru (Custom)..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2 text-xs text-slate-100 focus:outline-none placeholder-slate-600">
+                        <datalist id="roles-datalist">
+                            @foreach($allRoles as $rOpt)
+                                <option value="{{ $rOpt }}">
+                            @endforeach
+                        </datalist>
                     </div>
                     <div>
-                        <label class="block font-semibold text-slate-300 mb-1">Status</label>
+                        <label class="block font-semibold text-slate-300 mb-1">Status Member</label>
                         <select wire:model="status" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-slate-100 focus:outline-none">
                             <option value="ACTIVE">ACTIVE</option>
                             <option value="INACTIVE">INACTIVE</option>

@@ -71,7 +71,9 @@ class User extends Authenticatable
                 ],
             ];
 
-            return in_array($permission, $defaultRolePermissions[$this->role] ?? []);
+            return in_array($permission, $defaultRolePermissions[$this->role] ?? [
+                'project.view', 'task.view', 'progress.view', 'progress.update', 'schedule.view', 'notification.view'
+            ]);
         }
 
         return in_array($permission, $this->permissions);
