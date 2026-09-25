@@ -18,7 +18,6 @@
     <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 shadow-xl space-y-3">
         <div class="flex items-center justify-between">
             <span class="text-xs font-bold text-white uppercase tracking-wider">Role & Peran Sistem Aktif</span>
-            <span class="text-[10px] text-slate-400">Super Admin dapat memasukkan Role Baru (Custom) kapan saja</span>
         </div>
         <div class="flex flex-wrap gap-2">
             @foreach($allRoles as $rTag)
