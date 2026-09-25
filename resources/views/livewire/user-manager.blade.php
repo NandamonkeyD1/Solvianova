@@ -4,9 +4,14 @@
             <h1 class="text-2xl font-black text-white tracking-tight">Team & User Management</h1>
             <p class="text-xs text-slate-400">Kelola akun anggota tim, joki freelance, role, dan hak akses sistem.</p>
         </div>
-        <button wire:click="openCreateModal" class="px-4 py-2.5 bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-brand-600/25 transition-all flex items-center justify-center gap-2">
-            + Tambah Member / Role Baru
-        </button>
+        <div class="flex items-center gap-2">
+            <button wire:click="openRoleModal" class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-indigo-600/25 transition-all flex items-center justify-center gap-2">
+                🛡️ + Buat / Kelola Role Baru
+            </button>
+            <button wire:click="openCreateModal" class="px-4 py-2.5 bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-brand-600/25 transition-all flex items-center justify-center gap-2">
+                + Tambah Member
+            </button>
+        </div>
     </div>
 
     <!-- Active Roles Overview -->
@@ -147,6 +152,67 @@
                 <div class="flex justify-end gap-3 pt-3 border-t border-slate-800">
                     <button type="button" wire:click="$set('showCreateModal', false)" class="px-4 py-2 bg-slate-800 text-slate-300 font-bold rounded-xl">Batal</button>
                     <button type="submit" class="px-5 py-2 bg-brand-600 text-white font-bold rounded-xl">Simpan User</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    @endif
+
+    <!-- CREATE / EDIT MASTER ROLE MODAL -->
+    @if($showRoleModal)
+    <div class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-lg p-6 shadow-2xl space-y-4 text-xs">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 class="font-extrabold text-base text-indigo-400">
+                    {{ $editingRoleId ? 'Edit Master Role & Hak Akses' : '🛡️ Buat Role Baru (Master Role)' }}
+                </h3>
+                <button wire:click="$set('showRoleModal', false)" class="text-slate-400 hover:text-white font-bold text-lg">&times;</button>
+            </div>
+
+            <form wire:submit.prevent="saveRole" class="space-y-3">
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold text-slate-300 mb-1">Nama Role (Display Name) *</label>
+                        <input type="text" wire:model="role_display_name" placeholder="Contoh: QA Engineer, Scrum Master" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-slate-100 focus:outline-none">
+                        @error('role_display_name') <span class="text-red-400 mt-1 block">{{ $message }}</span> @enderror
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-slate-300 mb-1">Kode Role (Key)</label>
+                        <input type="text" wire:model="role_name" placeholder="QA_ENGINEER" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-slate-100 font-mono focus:outline-none uppercase">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-semibold text-slate-300 mb-1">Deskripsi Role</label>
+                    <textarea wire:model="role_description" rows="2" placeholder="Tugas dan tanggung jawab role ini..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-slate-100 focus:outline-none"></textarea>
+                </div>
+
+                <!-- Master Roles List Table in Modal -->
+                @if($masterRoles->count() > 0)
+                <div class="space-y-2 border-t border-slate-800 pt-3">
+                    <label class="block font-extrabold text-slate-200">Daftar Master Role Tersimpan dalam Sistem:</label>
+                    <div class="max-h-44 overflow-y-auto space-y-1.5 pr-1">
+                        @foreach($masterRoles as $mRole)
+                        <div class="p-2.5 bg-slate-950 border border-slate-800 rounded-xl flex items-center justify-between">
+                            <div>
+                                <span class="font-bold text-white block">{{ $mRole->display_name }}</span>
+                                <span class="text-[10px] text-slate-500 font-mono">{{ $mRole->name }}</span>
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <button type="button" wire:click="editRole({{ $mRole->id }})" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold rounded-lg text-[10px]">Edit</button>
+                                @if(!in_array($mRole->name, ['SUPER_ADMIN', 'JOKI']))
+                                <button type="button" wire:confirm="Hapus role master {{ $mRole->display_name }}?" wire:click="deleteRole({{ $mRole->id }})" class="px-2 py-1 bg-red-500/10 text-red-400 hover:bg-red-500/20 font-bold rounded-lg text-[10px]">Hapus</button>
+                                @endif
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+                @endif
+
+                <div class="flex justify-end gap-3 pt-3 border-t border-slate-800">
+                    <button type="button" wire:click="$set('showRoleModal', false)" class="px-4 py-2 bg-slate-800 text-slate-300 font-bold rounded-xl">Batal</button>
+                    <button type="submit" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-lg shadow-indigo-600/25">Simpan Role Master</button>
                 </div>
             </form>
         </div>

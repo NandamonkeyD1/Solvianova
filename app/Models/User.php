@@ -48,35 +48,24 @@ class User extends Authenticatable
             return true;
         }
 
-        if (empty($this->permissions)) {
-            // Default role-based permissions fallback
-            $defaultRolePermissions = [
-                'JOKI' => [
-                    'task.view', 'progress.view', 'progress.update', 'schedule.view', 'notification.view'
-                ],
-                'CONTENT_CREATOR' => [
-                    'project.view', 'task.view', 'progress.view', 'progress.update', 'schedule.view', 'notification.view'
-                ],
-                'DESIGNER' => [
-                    'project.view', 'task.view', 'progress.view', 'progress.update', 'schedule.view', 'notification.view'
-                ],
-                'FRONTEND_DEV' => [
-                    'project.view', 'task.view', 'progress.view', 'progress.update', 'schedule.view', 'notification.view'
-                ],
-                'BACKEND_DEV' => [
-                    'project.view', 'task.view', 'progress.view', 'progress.update', 'schedule.view', 'notification.view'
-                ],
-                'IOT_ENGINEER' => [
-                    'project.view', 'task.view', 'progress.view', 'progress.update', 'schedule.view', 'notification.view'
-                ],
-            ];
-
-            return in_array($permission, $defaultRolePermissions[$this->role] ?? [
-                'project.view', 'task.view', 'progress.view', 'progress.update', 'schedule.view', 'notification.view'
-            ]);
+        if (!empty($this->permissions)) {
+            return in_array($permission, $this->permissions);
         }
 
-        return in_array($permission, $this->permissions);
+        $roleModel = Role::where('name', $this->role)->first();
+        if ($roleModel && !empty($roleModel->permissions)) {
+            return in_array($permission, $roleModel->permissions);
+        }
+
+        $defaultRolePermissions = [
+            'JOKI' => [
+                'task.view', 'progress.view', 'progress.update', 'schedule.view', 'notification.view'
+            ],
+        ];
+
+        return in_array($permission, $defaultRolePermissions[$this->role] ?? [
+            'project.view', 'task.view', 'progress.view', 'progress.update', 'schedule.view', 'notification.view'
+        ]);
     }
 
     public function assignedTasks(): BelongsToMany

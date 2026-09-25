@@ -440,4 +440,23 @@ class SolviaNovaSystemTest extends TestCase
             'role' => 'DEVOPS_ENGINEER',
         ]);
     }
+
+    public function test_master_role_creation_and_management()
+    {
+        $admin = User::where('role', 'SUPER_ADMIN')->first();
+
+        Livewire::actingAs($admin)
+            ->test(\App\Livewire\UserManager::class)
+            ->call('openRoleModal')
+            ->set('role_display_name', 'Lead System Architect')
+            ->set('role_name', 'SYSTEM_ARCHITECT')
+            ->set('role_description', 'Mengarsitekturkan sistem dan infrastruktur')
+            ->call('saveRole')
+            ->assertDispatched('toast');
+
+        $this->assertDatabaseHas('roles', [
+            'name' => 'SYSTEM_ARCHITECT',
+            'display_name' => 'Lead System Architect',
+        ]);
+    }
 }
